@@ -48,9 +48,9 @@ WORKDIR /app
 # Set aliases for python and pip
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Install PyTorch 2.4.0 for CUDA 12.4 before cache bust
+# Install PyTorch 2.9.1 for CUDA 12.4 before cache bust
 RUN pip install --no-cache-dir torch==2.9.1 torchvision==0.24.1 torchaudio==2.9.1 \
-    --index-url https://download.pytorch.org/whl/cu124 --break-system-packages
+    --index-url https://download.pytorch.org/whl/cu128 --break-system-packages
 
 # Install JupyterLab
 RUN pip install --no-cache-dir jupyterlab --break-system-packages
