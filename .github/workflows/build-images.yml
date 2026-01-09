@@ -27,7 +27,17 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.basic
           push: true
           # This creates an image named: yourusername/repo-name:basic
           tags: ${{ secrets.DOCKER_USERNAME }}/ostris-runpod:basic
+
+      # --- BUILD BLACKWELL IMAGE ---
+      - name: Build and push Blackwell Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.blackwell
+          push: true
+          # This creates an image named: yourusername/repo-name:blackwell
+          tags: ${{ secrets.DOCKER_USERNAME }}/ostris-runpod:blackwell
