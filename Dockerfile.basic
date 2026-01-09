@@ -16,40 +16,59 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libgl1 \
     libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 # Set Python 3.11 as default
 RUN ln -s /usr/bin/python3.11 /usr/bin/python
 
 # Install Node.js (Required for AI Toolkit UI)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
-# Install PyTorch 2.4.0 specific version
-RUN pip install --no-cache-dir torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu124
+# Install PyTorch 2.4.0 - Use pip with minimal cache and clean up immediately
+RUN pip install --no-cache-dir \
+    torch==2.4.0 \
+    torchvision==0.19.0 \
+    torchaudio==2.4.0 \
+    --index-url https://download.pytorch.org/whl/cu124 \
+    && pip cache purge \
+    && rm -rf /root/.cache/pip
 
 # Install Jupyter Lab
-RUN pip install --no-cache-dir jupyterlab
+RUN pip install --no-cache-dir jupyterlab \
+    && pip cache purge \
+    && rm -rf /root/.cache/pip
 
 # Clone and Setup AI Toolkit
 WORKDIR /app
 RUN git clone https://github.com/ostris/ai-toolkit.git
+
 WORKDIR /app/ai-toolkit
 
-# Install AI Toolkit Python Requirements[ 4 (https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF0Znb_uV0ohRfDT6fdRBIwyYU336X8y4tinlFiOCiy4WQ_PfzhRUz4iIS3lLRSXatQBiDl_mG1pp0YxZkwy8JzNf2a-R3-28LPq1k8Ccp-tG7_179U0D1ar_PxA7X1eQ==)][ 13 (https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH76tLZcbrX76QeCdt6kTi2s2RkAaKalJMCBGwuJgqKygCONz84iwEE9GhJOk_QQW4EiUzldBH_qWbnE0utplO8o7pb-ie4elR2xouFE7Nr3BPF18nV96GM1HsQVf19brkor6oA_P6ZSR_CksPoexHC5tBkpUnXoSAp6faEHGRnPH66EZk8Tk524T4=)]
+# Install AI Toolkit Python Requirements
 # We use --ignore-installed to prevent overwriting our specific PyTorch version
-RUN pip install --no-cache-dir -r requirements.txt --ignore-installed torch torchvision torchaudio
+RUN pip install --no-cache-dir -r requirements.txt \
+    --ignore-installed torch torchvision torchaudio \
+    && pip cache purge \
+    && rm -rf /root/.cache/pip
 
 # Setup AI Toolkit UI
 WORKDIR /app/ai-toolkit/ui
 
-RUN npm install
+RUN npm install && \
+    npm run build && \
+    npm cache clean --force && \
+    rm -rf /root/.npm
 
-RUN npm run build
 # Copy Start Script
 COPY start.sh /start.sh
-
 RUN chmod +x /start.sh
+
+# Set working directory back to ai-toolkit for easier access
+WORKDIR /app/ai-toolkit
 
 # Expose Ports
 EXPOSE 8888 8675
