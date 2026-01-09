@@ -29,7 +29,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
 # Install PyTorch 2.9 specific version (Assuming cuda 12.8 wheel exists)
-RUN pip install --no-cache-dir torch==2.9.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+RUN pip install --no-cache-dir torch==2.9.0 torchvision==0.24.0 torchaudio==2.9.0 --index-url https://download.pytorch.org/whl/cu128
 
 # Install Jupyter Lab
 RUN pip install --no-cache-dir jupyterlab
