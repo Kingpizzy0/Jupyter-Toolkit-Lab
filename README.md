@@ -22,7 +22,7 @@ A unified Docker container template for AI development on GPU cloud services lik
 ### Using on RunPod
 
 1. Go to RunPod.io and create a new template
-2. Use this Docker image: `yourusername/jupyter-toolkit-lab:latest`
+2. Use this Docker image: `keganrogue/jupyter-toolkit-lab:latest`
 3. Expose ports: `8888, 8675`
 4. Set environment variables (optional):
    - `JUPYTER_PASSWORD`: Your JupyterLab password (default: "Password")
@@ -33,7 +33,7 @@ A unified Docker container template for AI development on GPU cloud services lik
 ### Using on Vast.ai
 
 1. Search for an instance with your desired GPU
-2. Use the Docker image: `yourusername/jupyter-toolkit-lab:latest`
+2. Use the Docker image: `keganrogue/jupyter-toolkit-lab:latest`
 3. Map ports `8888` and `8675`
 4. Launch your instance
 
@@ -50,7 +50,7 @@ Once your container is running:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/jupyter-toolkit-lab.git
+git clone https://github.com/keganrogue/jupyter-toolkit-lab.git
 cd jupyter-toolkit-lab
 
 # Build the image
@@ -129,3 +129,4 @@ This project builds upon the Ostris AI Toolkit. Please refer to the original pro
 - [Ostris AI Toolkit](https://github.com/ostris/ai-toolkit)
 - NVIDIA CUDA Toolkit
 - JupyterLab Project
+
