@@ -98,18 +98,6 @@ RUN wget -c https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_fi
 RUN wget -c https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors \
     -O models/vae/ae.safetensors
 
-# Download models for ComfyUI
-WORKDIR /app/ComfyUI
-RUN mkdir -p models/checkpoints models/vae models/loras models/embeddings
-
-# Download SDXL Base model (6.46 GB)
-RUN wget -c https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors \
-    -O models/checkpoints/sd_xl_base_1.0.safetensors
-
-# Download SDXL VAE
-RUN wget -c https://huggingface.co/stabilityai/sdxl-vae/resolve/main/sdxl_vae.safetensors \
-    -O models/vae/sdx
-
 # Build UI
 WORKDIR /app/ai-toolkit/ui
 RUN npm install && \
