@@ -6,9 +6,9 @@ set -e
 echo "=== Starting Jupyter Toolkit Lab Services ==="
 
 # Configuration
-JUPYTER_PWD=${JUPYTER_PASSWORD:-Password}
 JUPYTER_PORT=${JUPYTER_PORT:-8888}
 AI_TOOLKIT_PORT=${AI_TOOLKIT_PORT:-8675}
+COMFYUI_PORT=${COMFYUI_PORT:-8188}
 LOG_DIR="/var/log"
 
 # Create log directory
@@ -27,7 +27,8 @@ fi
 
 # Set the password (hashed) and configuration
 cat >> ~/.jupyter/jupyter_lab_config.py << EOF
-c.ServerApp.password = '$(python3 -c "from jupyter_server.auth import passwd; print(passwd('$JUPYTER_PWD'))")'
+c.ServerApp.token = ''
+c.ServerApp.password = ''
 c.ServerApp.ip = '0.0.0.0'
 c.ServerApp.allow_origin = '*'
 c.ServerApp.open_browser = False
@@ -45,14 +46,32 @@ sleep 3
 if ps -p $JUPYTER_PID > /dev/null; then
     echo "[OK] Jupyter Lab started successfully on port $JUPYTER_PORT"
     echo "      Logs: $LOG_DIR/jupyter.log"
-    echo "      Password: [Check JUPYTER_PASSWORD env var]"
+    echo "      Access: No password required"
 else
     echo "[ERROR] Jupyter Lab failed to start. Check logs at $LOG_DIR/jupyter.log"
     cat "$LOG_DIR/jupyter.log"
     exit 1
 fi
 
-# 2. Start Ostris AI Toolkit UI
+# 2. Start ComfyUI
+echo "[INFO] Starting ComfyUI on port $COMFYUI_PORT..."
+cd /app/ComfyUI
+
+nohup python main.py --listen 0.0.0.0 --port "$COMFYUI_PORT" > "$LOG_DIR/comfyui.log" 2>&1 &
+COMFYUI_PID=$!
+
+# Verify ComfyUI started
+sleep 5
+if ps -p $COMFYUI_PID > /dev/null; then
+    echo "[OK] ComfyUI started successfully on port $COMFYUI_PORT"
+    echo "      Logs: $LOG_DIR/comfyui.log"
+else
+    echo "[ERROR] ComfyUI failed to start. Check logs at $LOG_DIR/comfyui.log"
+    cat "$LOG_DIR/comfyui.log"
+    exit 1
+fi
+
+# 3. Start Ostris AI Toolkit UI
 echo "[INFO] Starting AI Toolkit UI on port $AI_TOOLKIT_PORT..."
 cd /app/ai-toolkit/ui
 
